@@ -28,5 +28,10 @@
         "psr-0": {
             "Michelf": ""
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Org\\Snje\\MarkdownTest\\": "tests/"
+        }
     }
 }

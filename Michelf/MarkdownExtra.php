@@ -1380,7 +1380,7 @@ class MarkdownExtra extends \Michelf\Markdown {
 				)
 				[ ]*
 				(?:
-					\.?([-_:a-zA-Z0-9]+) # 2: standalone class name
+					(\.{0,2}[-_:a-zA-Z0-9]+) # 2: standalone class name
 				)?
 				[ ]*
 				(?:
@@ -1413,6 +1413,12 @@ class MarkdownExtra extends \Michelf\Markdown {
         $attrs = & $matches[3];
         $codeblock = $matches[4];
 
+        if (substr($classname, 0, 2) == '..') {
+            $classname = substr($classname, 2);
+            $codeblock = $this->_doCustomCodeParser($classname, $codeblock);
+            return "\n\n" . $this->hashBlock($codeblock) . "\n\n";
+        }
+
         if ($this->code_block_content_func) {
             $codeblock = call_user_func($this->code_block_content_func, $codeblock, $classname);
         } else {
@@ -1433,6 +1439,15 @@ class MarkdownExtra extends \Michelf\Markdown {
         $codeblock = "<pre$pre_attr_str><code$code_attr_str>$codeblock</code></pre>";
 
         return "\n\n" . $this->hashBlock($codeblock) . "\n\n";
+    }
+
+    public $custom_code_parser = null;
+
+    protected function _doCustomCodeParser($class, $code) {
+        if (!is_callable($this->custom_code_parser)) {
+            return '';
+        }
+        return call_user_func($this->custom_code_parser, $class, $code);
     }
 
     /**
