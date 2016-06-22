@@ -38,8 +38,8 @@ class TodoList extends \PHPUnit_Framework_TestCase {
             ["## aaa\n[] 1111", "<h2>aaa</h2>\n\n<p class=\"todo\"><input type=\"checkbox\" disabled=\"disabled\" />1111</p>"],
             ["[*] 2222", '<p class="todo"><input type="checkbox" disabled="disabled" checked="checked" />2222</p>'],
             ['[+]3333', '<p class="todo"><input type="checkbox" disabled="disabled" checked="checked" />3333</p>'],
-            ['[ ]4444', '<p class="todo"><input type="radio" disabled="disabled" />4444</p>'],
-            ['[-]5555', '<p class="todo"><input type="radio" disabled="disabled" checked="checked" />5555</p>'],
+            ['[ ]4444[111](https://www.baidu.com)', '<p class="todo"><input type="radio" disabled="disabled" />4444<a href="https://www.baidu.com">111</a></p>'],
+            ['[-]55`abc`55', '<p class="todo"><input type="radio" disabled="disabled" checked="checked" />55<code>abc</code>55</p>'],
         ];
 
         foreach ($tests as $v) {

@@ -1776,21 +1776,25 @@ class MarkdownExtra extends \Michelf\Markdown {
         $block = '';
         switch ($type) {
             case '[]':
-                $block = '<input type="checkbox" disabled="disabled" />' . $text;
+                $block = '<input type="checkbox" disabled="disabled" />';
                 break;
             case '[*]':
             case '[+]':
-                $block = '<input type="checkbox" disabled="disabled" checked="checked" />' . $text;
+                $block = '<input type="checkbox" disabled="disabled" checked="checked" />';
                 break;
             case '[ ]':
-                $block = '<input type="radio" disabled="disabled" />' . $text;
+                $block = '<input type="radio" disabled="disabled" />';
                 break;
             case '[-]':
-                $block = '<input type="radio" disabled="disabled" checked="checked" />' . $text;
+                $block = '<input type="radio" disabled="disabled" checked="checked" />';
                 break;
             default :
                 return $matches[0];
         }
+
+        $text = $this->runSpanGamut($text);
+        $block .= $text;
+
         return "\n" . $this->hashBlock("<p class=\"todo\">" . $block . "</p>") . "\n\n";
     }
 
