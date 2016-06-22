@@ -97,6 +97,7 @@ class MarkdownExtra extends \Michelf\Markdown {
         );
         $this->block_gamut += array(
             "doFencedCodeBlocks" => 5,
+            "doTodoList" => 6,
             "doTables" => 15,
             "doDefLists" => 45,
         );
@@ -1748,6 +1749,49 @@ class MarkdownExtra extends \Michelf\Markdown {
         } else {
             return $matches[0];
         }
+    }
+
+    protected function doTodoList($text) {
+        /**
+         *   [] checkbox, not checked
+         *   [*] checkbox, checked
+         *   [+] checkbox, checked
+         *   [ ] radio, not checked
+         *   [-] radio, checked
+         */
+        $text = preg_replace_callback('{
+				^(\[[*+ -]?\])	# $1 = string of [...]
+				[ ]*
+				(.+?)		# $2 = text
+				[ ]*
+				\n+
+			}xm', array($this, '_doTodoList_callback'), $text);
+
+        return $text;
+    }
+
+    protected function _doTodoList_callback($matches) {
+        $type = $matches[1];
+        $text = $matches[2];
+        $block = '';
+        switch ($type) {
+            case '[]':
+                $block = '<input type="checkbox" disable="disable" />' . $text;
+                break;
+            case '[*]':
+            case '[+]':
+                $block = '<input type="checkbox" disable="disable" checked="checked" />' . $text;
+                break;
+            case '[ ]':
+                $block = '<input type="radio" disable="disable" />' . $text;
+                break;
+            case '[-]':
+                $block = '<input type="radio" disable="disable" checked="checked" />' . $text;
+                break;
+            default :
+                return $matches[0];
+        }
+        return "\n" . $this->hashBlock("<p class=\"todo\">" . $block . "</p>") . "\n\n";
     }
 
 }
