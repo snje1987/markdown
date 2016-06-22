@@ -1756,11 +1756,26 @@ class MarkdownExtra extends \Michelf\Markdown {
          *   [] checkbox, not checked
          *   [*] checkbox, checked
          *   [+] checkbox, checked
-         *   [ ] radio, not checked
-         *   [-] radio, checked
+         *   [ ] checkbox, not checked
+         *   [-] checkbox, not checked
          */
         $text = preg_replace_callback('{
 				^(\[[*+ -]?\])	# $1 = string of [...]
+				[ ]*
+				(.+?)		# $2 = text
+				[ ]*
+				\n+
+			}xm', array($this, '_doTodoList_callback'), $text);
+
+        /**
+         *   () radio, not checked
+         *   (*) radio, checked
+         *   (+) radio, checked
+         *   ( ) radio, not checked
+         *   (-) radio, not checked
+         */
+        $text = preg_replace_callback('{
+				^(\([*+ -]?\))	# $1 = string of [...]
 				[ ]*
 				(.+?)		# $2 = text
 				[ ]*
@@ -1776,16 +1791,21 @@ class MarkdownExtra extends \Michelf\Markdown {
         $block = '';
         switch ($type) {
             case '[]':
+            case '[ ]':
+            case '[-]':
                 $block = '<input type="checkbox" disabled="disabled" />';
                 break;
             case '[*]':
             case '[+]':
                 $block = '<input type="checkbox" disabled="disabled" checked="checked" />';
                 break;
-            case '[ ]':
+            case '()':
+            case '( )':
+            case '(-)':
                 $block = '<input type="radio" disabled="disabled" />';
                 break;
-            case '[-]':
+            case '(*)':
+            case '(+)':
                 $block = '<input type="radio" disabled="disabled" checked="checked" />';
                 break;
             default :
