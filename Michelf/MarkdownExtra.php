@@ -1776,17 +1776,17 @@ class MarkdownExtra extends \Michelf\Markdown {
         $block = '';
         switch ($type) {
             case '[]':
-                $block = '<input type="checkbox" disable="disable" />' . $text;
+                $block = '<input type="checkbox" disabled="disabled" />' . $text;
                 break;
             case '[*]':
             case '[+]':
-                $block = '<input type="checkbox" disable="disable" checked="checked" />' . $text;
+                $block = '<input type="checkbox" disabled="disabled" checked="checked" />' . $text;
                 break;
             case '[ ]':
-                $block = '<input type="radio" disable="disable" />' . $text;
+                $block = '<input type="radio" disabled="disabled" />' . $text;
                 break;
             case '[-]':
-                $block = '<input type="radio" disable="disable" checked="checked" />' . $text;
+                $block = '<input type="radio" disabled="disabled" checked="checked" />' . $text;
                 break;
             default :
                 return $matches[0];
