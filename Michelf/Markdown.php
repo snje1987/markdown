@@ -5,8 +5,8 @@
  *
  * @package   php-markdown
  * @author    Michel Fortin <michel.fortin@michelf.com>
- * @copyright 2004-2016 Michel Fortin <http://michelf.com/projects/php-markdown/>
- * @copyright (Original Markdown) 2004-2006 John Gruber <http://daringfireball.net/projects/markdown/>
+ * @copyright 2004-2016 Michel Fortin <https://michelf.com/projects/php-markdown/>
+ * @copyright (Original Markdown) 2004-2006 John Gruber <https://daringfireball.net/projects/markdown/>
  */
 
 namespace Michelf;
@@ -20,7 +20,7 @@ class Markdown implements MarkdownInterface {
      * Define the package version
      * @var string
      */
-    const MARKDOWNLIB_VERSION = "1.6.0";
+    const MARKDOWNLIB_VERSION = "1.7.0";
 
     /**
      * Simple function interface - Initialize the parser and return the result
@@ -70,6 +70,12 @@ class Markdown implements MarkdownInterface {
      */
     public $no_markup = false;
     public $no_entities = false;
+
+    /**
+     * Change to `true` to enable line breaks on \n without two trailling spaces
+     * @var boolean
+     */
+    public $hard_wrap = false;
 
     /**
      * Predefined URLs and titles for reference links and images.
@@ -611,7 +617,11 @@ class Markdown implements MarkdownInterface {
      * @return string
      */
     protected function doHardBreaks($text) {
-        return preg_replace_callback('/ {2,}\n/', array($this, '_doHardBreaks_callback'), $text);
+        if ($this->hard_wrap) {
+            return preg_replace_callback('/ *\n/', array($this, '_doHardBreaks_callback'), $text);
+        } else {
+            return preg_replace_callback('/ {2,}\n/', array($this, '_doHardBreaks_callback'), $text);
+        }
     }
 
     /**
@@ -1140,8 +1150,7 @@ class Markdown implements MarkdownInterface {
         } else {
             // Recursion for sub-lists:
             $item = $this->doLists($this->outdent($item));
-            $item = preg_replace('/\n+$/', '', $item);
-            $item = $this->runSpanGamut($item);
+            $item = $this->formParagraphs($item, false);
         }
 
         return "<li>" . $item . "</li>\n";
@@ -1438,10 +1447,11 @@ class Markdown implements MarkdownInterface {
     /**
      * Parse paragraphs
      *
-     * @param  string $text String to process with HTML <p> tags
+     * @param  string $text String to process in paragraphs
+     * @param  boolean $wrap_in_p Whether paragraphs should be wrapped in <p> tags
      * @return string
      */
-    protected function formParagraphs($text) {
+    protected function formParagraphs($text, $wrap_in_p = true) {
         // Strip leading and trailing lines:
         $text = preg_replace('/\A\n+|\n+\z/', '', $text);
 
@@ -1452,8 +1462,10 @@ class Markdown implements MarkdownInterface {
             if (!preg_match('/^B\x1A[0-9]+B$/', $value)) {
                 // Is a paragraph.
                 $value = $this->runSpanGamut($value);
-                $value = preg_replace('/^([ ]*)/', "<p>", $value);
-                $value .= "</p>";
+                if ($wrap_in_p) {
+                    $value = preg_replace('/^([ ]*)/', "<p>", $value);
+                    $value .= "</p>";
+                }
                 $grafs[$key] = $this->unhash($value);
             } else {
                 // Is a block.

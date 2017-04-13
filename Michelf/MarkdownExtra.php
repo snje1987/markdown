@@ -5,8 +5,8 @@
  *
  * @package   php-markdown
  * @author    Michel Fortin <michel.fortin@michelf.com>
- * @copyright 2004-2016 Michel Fortin <http://michelf.com/projects/php-markdown/>
- * @copyright (Original Markdown) 2004-2006 John Gruber <http://daringfireball.net/projects/markdown/>
+ * @copyright 2004-2016 Michel Fortin <https://michelf.com/projects/php-markdown/>
+ * @copyright (Original Markdown) 2004-2006 John Gruber <https://daringfireball.net/projects/markdown/>
  */
 
 namespace Michelf;
@@ -120,7 +120,7 @@ class MarkdownExtra extends \Michelf\Markdown {
     protected $footnotes_numbers = array();
     protected $abbr_desciptions = array();
 
-    /** @var @string */
+    /** @var string */
     protected $abbr_word_re = '';
 
     /**
@@ -462,7 +462,7 @@ class MarkdownExtra extends \Michelf\Markdown {
             // after each newline to prevent triggering any block element.
             if ($span) {
                 $void = $this->hashPart("", ':');
-                $newline = "$void\n";
+                $newline = "\n$void";
                 $parts[0] = $void . str_replace("\n", $newline, $parts[0]) . $void;
             }
 
@@ -1483,10 +1483,11 @@ class MarkdownExtra extends \Michelf\Markdown {
 
     /**
      * Parse text into paragraphs
-     * @param  string $text String to process with html <p> tags
+     * @param  string $text String to process in paragraphs
+     * @param  boolean $wrap_in_p Whether paragraphs should be wrapped in <p> tags
      * @return string       HTML output
      */
-    protected function formParagraphs($text) {
+    protected function formParagraphs($text, $wrap_in_p = true) {
         // Strip leading and trailing lines:
         $text = preg_replace('/\A\n+|\n+\z/', '', $text);
 
@@ -1498,7 +1499,7 @@ class MarkdownExtra extends \Michelf\Markdown {
 
             // Check if this should be enclosed in a paragraph.
             // Clean tag hashes & block tag hashes are left alone.
-            $is_p = !preg_match('/^B\x1A[0-9]+B|^C\x1A[0-9]+C$/', $value);
+            $is_p = $wrap_in_p && !preg_match('/^B\x1A[0-9]+B|^C\x1A[0-9]+C$/', $value);
 
             if ($is_p) {
                 $value = "<p>$value</p>";
