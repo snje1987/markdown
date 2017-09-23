@@ -30,9 +30,6 @@ class TodoList extends \PHPUnit_Framework_TestCase {
 
     public function test_TodoList() {
         $markdown = new MarkdownExtra();
-        $markdown->custom_code_parser = function($class, $code) {
-            return '<' . $class . '>' . $code . '</' . $class . '>';
-        };
 
         $tests = [
             ["## aaa\n[] 1111", "<h2>aaa</h2>\n\n<p class=\"todo\"><input type=\"checkbox\" disabled=\"disabled\" />1111</p>"],

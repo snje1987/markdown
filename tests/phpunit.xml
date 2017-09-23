@@ -4,6 +4,7 @@
         <testsuite name="code">
             <file>Test/Codeblock.php</file>
             <file>Test/TodoList.php</file>
+            <file>Test/Table.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

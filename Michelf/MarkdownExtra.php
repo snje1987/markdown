@@ -1233,7 +1233,8 @@ class MarkdownExtra extends \Michelf\Markdown {
 		$rows = explode("\n", trim($content, "\n"));
 
 		$text .= "<tbody>\n";
-		foreach ($rows as $row) {
+        $counter = array();
+        foreach ($rows as $row) {
 			// Parsing span elements, including code spans, character escapes,
 			// and inline HTML tags, so that pipes inside those gets ignored.
 			$row = $this->parseSpan($row);
@@ -1243,9 +1244,18 @@ class MarkdownExtra extends \Michelf\Markdown {
 			$row_cells = array_pad($row_cells, $col_count, '');
 
 			$text .= "<tr>\n";
-			foreach ($row_cells as $n => $cell)
-				$text .= "  <td$attr[$n]>" . $this->runSpanGamut(trim($cell)) . "</td>\n";
-			$text .= "</tr>\n";
+			foreach ($row_cells as $n => $cell) {
+                if (preg_match('/^(\d+)\.$/', $cell, $matches)) {
+                    if (!isset($counter[$n])) {
+                        $counter[$n] = intval($matches[1]);
+                    }
+                    $text .= "  <td$attr[$n]>" . $counter[$n] . "</td>\n";
+                    $counter[$n] ++;
+                } else {
+                    $text .= "  <td$attr[$n]>" . $this->runSpanGamut(trim($cell)) . "</td>\n";
+                }
+            }
+            $text .= "</tr>\n";
 		}
 		$text .= "</tbody>\n";
 		$text .= "</table>";
@@ -1455,8 +1465,8 @@ class MarkdownExtra extends \Michelf\Markdown {
 		$classname =& $matches[2];
 		$attrs     =& $matches[3];
 		$codeblock = $matches[4];
-        
-        
+
+
         if (substr($classname, 0, 2) == '..') {
             $classname = substr($classname, 2);
             $codeblock = $this->_doCustomCodeParser($classname, $codeblock);
@@ -1485,7 +1495,7 @@ class MarkdownExtra extends \Michelf\Markdown {
 
 		return "\n\n".$this->hashBlock($codeblock)."\n\n";
 	}
-    
+
     public $custom_code_parser = null;
 
     protected function _doCustomCodeParser($class, $code) {
@@ -1791,7 +1801,7 @@ class MarkdownExtra extends \Michelf\Markdown {
             default :
                 return $matches[0];
         }
-        
+
         $text = $this->runSpanGamut($text);
         $block .= $text;
 
