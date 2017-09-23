@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="vendor/autoload.php">
-    <testsuites>
-        <testsuite name="code">
-            <file>tests/Test/Codeblock.php</file>
-            <file>tests/Test/TodoList.php</file>
-        </testsuite>
-    </testsuites>
-</phpunit>
